@@ -73,4 +73,44 @@ public class UserServiceIntegrationTest {
         // check that an error is thrown
         assertThrows(ResponseStatusException.class, () -> userService.createUser(testUser2));
     }
+
+    @Test
+    public void logInUser_wrongPassword_throwsException() {
+        assertNull(userRepository.findByUsername("testUsername"));
+
+        User testUser = new User();
+        testUser.setPassword("testName");
+        testUser.setUsername("testUsername");
+        User createdUser = userService.createUser(testUser);
+
+        // attempt to create second user with same username
+        User testUser2 = new User();
+
+        // change the name but forget about the username
+        testUser2.setPassword("testName2");
+        testUser2.setUsername("testUsername");
+
+        // check that an error is thrown
+        assertThrows(ResponseStatusException.class, () -> userService.checkForLoginCredentials(testUser2));
+    }
+
+    @Test
+    public void logInUser_wrongPassword_doesNotThrowException() {
+        assertNull(userRepository.findByUsername("testUsername"));
+
+        User testUser = new User();
+        testUser.setPassword("testName");
+        testUser.setUsername("testUsername");
+        User createdUser = userService.createUser(testUser);
+
+        // attempt to create second user with same username
+        User testUser2 = new User();
+
+        // change the name but forget about the username
+        testUser2.setPassword("testName");
+        testUser2.setUsername("testUsername");
+
+        // check that no error is thrown
+        userService.checkForLoginCredentials(testUser2);
+    }
 }

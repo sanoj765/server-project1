@@ -51,6 +51,34 @@ public class UserService {
         return newUser;
     }
 
+    public User checkIfLogInUserExists(User logInUser){
+        User userByUsername = userRepository.findByUsername(logInUser.getUsername());
+
+        String baseErrorMessage = "The provided username does not exist!";
+        if (userByUsername == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, String.format(baseErrorMessage));
+        }
+        else{
+            return userByUsername;
+        }
+    }
+
+    public User checkForLoginCredentials(User logInUser) {
+        logInUser.setStatus(UserStatus.ONLINE);
+
+        User userFound = checkIfLogInUserExists(logInUser);
+
+        String baseErrorMessage = "Your password is wrong!";
+
+        if (!logInUser.getPassword().equals(userFound.getPassword())){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, String.format(baseErrorMessage));
+        }
+
+        else {
+            return userFound;
+        }
+    }
+
     /**
      * This is a helper method that will check the uniqueness criteria of the username
      * defined in the User entity. The method will do nothing if the input is unique and throw an error otherwise.

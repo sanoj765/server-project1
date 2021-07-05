@@ -64,5 +64,33 @@ public class UserServiceTest {
         assertThrows(ResponseStatusException.class, () -> userService.createUser(testUser));
     }
 
+    @Test
+    public void loginUser_wrongPassword_throwsException() {
+        User user1 = new User();
+        user1.setPassword("pw");
+        User user2 = new User();
+        user2.setPassword("pw2");
+
+        // when -> setup additional mocks for UserRepository
+        Mockito.when(userRepository.findByUsername(Mockito.any())).thenReturn(user2);
+
+        // then -> attempt to create second user with same user -> check that an error is thrown
+        assertThrows(ResponseStatusException.class, () -> userService.checkForLoginCredentials(user1));
+    }
+
+    @Test
+    public void loginUser_rightPassword_doesNotThrowException() {
+        User user1 = new User();
+        user1.setPassword("pw");
+        User user2 = new User();
+        user2.setPassword("pw");
+
+        // when -> setup additional mocks for UserRepository
+        Mockito.when(userRepository.findByUsername(Mockito.any())).thenReturn(user2);
+
+        // then -> attempt to create second user with same user -> check that an error is thrown
+        userService.checkForLoginCredentials(user1);
+    }
+
 
 }
