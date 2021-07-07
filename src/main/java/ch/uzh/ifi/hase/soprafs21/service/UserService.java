@@ -39,7 +39,7 @@ public class UserService {
 
     public User createUser(User newUser) {
         newUser.setToken(UUID.randomUUID().toString());
-        newUser.setStatus(UserStatus.OFFLINE);
+        newUser.setStatus(UserStatus.ONLINE);
 
         checkIfUserExists(newUser);
 
@@ -49,6 +49,22 @@ public class UserService {
 
         log.debug("Created Information for User: {}", newUser);
         return newUser;
+    }
+
+    public void setTokenOnline(User user){
+        User userByUsername = userRepository.findByUsername(user.getUsername());
+        userByUsername.setStatus(UserStatus.ONLINE);
+
+        userRepository.save(user);
+        userRepository.flush();
+    }
+
+    public void setTokenOffline(User user){
+        User userByUsername = userRepository.findByUsername(user.getUsername());
+        userByUsername.setStatus(UserStatus.OFFLINE);
+
+        userRepository.save(user);
+        userRepository.flush();
     }
 
     public User checkIfLogInUserExists(User logInUser){

@@ -64,6 +64,21 @@ public class UserController {
         // check if username and password are correct
         User loggedInUser = userService.checkForLoginCredentials(userInput);
 
+        userService.setTokenOnline(loggedInUser);
+
+        // convert internal representation of user back to API
+        return DTOMapper.INSTANCE.convertEntityToUserGetDTO(loggedInUser);
+    }
+
+    @PutMapping("/logout")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public UserGetDTO logoutUser(@RequestBody UserPostDTO userPostDTO) {
+
+
+
+        userService.setTokenOffline(loggedInUser);
+
         // convert internal representation of user back to API
         return DTOMapper.INSTANCE.convertEntityToUserGetDTO(loggedInUser);
     }
